@@ -1,67 +1,136 @@
-//ALL MATHS FUNCTIONS RELETED TO JS
+//DESIGN AND IMPLEMENT HASH FUNCTION OF FIXED SIZE
+//C LANGUAGE
+#include <stdio.h>
+#include <string.h>
+#define SIZE 10
 
-//MATH Functions are used to perform mathematical operations in JavaScript.
-//They are part of the Math object, which provides a collection of properties and 
-//methods for mathematical constants and functions.
+struct Entry {
+    int key;
+    char name[100];
+};
 
-//Here are some commonly used Math functions in JavaScript:
+struct Entry table[SIZE];
 
-// //1. Math.abs(x): Returns the absolute value of a number.
-// // Means it returns the non-negative value of x, regardless of whether x is positive or negative.
-// console.log(Math.abs(4)); // Output: 4
+void initialize() {
+    for(int i = 0; i < SIZE; i++) {
+        table[i].key = -1;
+        strcpy(table[i].name, "NULL");
+    }
+}
 
-//  //2. Math.ceil(x): Rounds a number up to the nearest integer
-// console.log(Math.ceil(3.01)); // Output: 4
+void insert() {
+    int k, index;
+    char n[100];
 
-// //3.Math.floor(x): Rounds a number down to the nearest integer
-// console.log(Math.floor(3.14)); // Output: 3
+    printf("Enter a Key: ");
+    scanf("%d", &k);
 
-// //4. Math.round(x): Rounds a number to the nearest integer
-// console.log(Math.round(3.50)); // Output: 3
-// console.log(Math.round(3.5)); // Output: 4
+    printf("Enter a Value: ");
+    scanf("%99s", n);
 
-// //5. Math.max(a, b, ...): Returns the largest of zero or more numbers
-// console.log(Math.max(1, 5, 3)); // Output: 5
+    int hi = k % SIZE;
 
-// //6. Math.min(a, b, ...): Returns the smallest of zero or more numbers
-// console.log(Math.min(1, 5, 3)); // Output: 1
+    for(int i = 0; i < SIZE; i++) {
+        index = (hi + i) % SIZE;
 
-// //7. Math.pow(base, exponent): Returns the base raised to the power of the exponent
-// console.log(Math.pow(2, 3)); // Output: 8
+        if(table[index].key == -1) {
+            table[index].key = k;
+            strcpy(table[index].name, n);
+            printf("Inserted at index %d", index);
+            return;
+        }
+    }
 
-// //8. Math.sqrt(x): Returns the square root of a number
-// console.log(Math.sqrt(16)); // Output: 4
+    printf("Hash Table is FULL!");
+}
 
-// //9. Math.random(): Returns a random floating-point number between 0 (inclusive) and 1 (exclusive)
-// console.log(Math.floor(Math.random() * 100) + 1); // Output: A random number between 1 and 100
+void display() {
+    printf("\nIndex\tKey\tName");
 
-// //10. Math.PI: Represents the ratio of the circumference of a circle to its diameter
-// console.log(Math.PI); // Output: 3.141592653589793
+    for(int i = 0; i < SIZE; i++) {
+        printf("\nh[%d]\t%d\t%s", i,
+        table[i].key, table[i].name);
+    }
+}
 
-// //11. Math.E: Represents Euler's number, the base of natural logarithms
-// console.log(Math.E); // Output: 2.718281828459045
+int find(int k) {
+    int hi = k % SIZE;
 
-// //12. Math.sin(x), Math.cos(x), Math.tan(x): Trigonometric functions
-// console.log(Math.sin(Math.PI / 2)); // Output: 1
-// console.log(Math.cos(0)); // Output: 1
-// console.log(Math.tan(Math.PI / 4)); // Output: 1
+    for(int i = 0; i < SIZE; i++) {
+        int index = (hi + i) % SIZE;
 
-// //13. Math.log(x): Returns the natural logarithm (base e) of a number
-// console.log(Math.log(Math.E)); // Output: 1
+        if(table[index].key == k) {
+            printf("%d Found at index %d with Name %s",
+            k, index, table[index].name);
+            return index;
+        }
 
-// //14. Math.exp(x): Returns e raised to the power of x
-// console.log(Math.exp(1)); // Output: 2.718281828459045
+        if(table[index].key == -1)
+            return -1;
+    }
 
-// //15. Math.sign(x): Returns the sign of a number, indicating whether it is positive, negative, or zero
-// console.log(Math.sign(-5)); // Output: -1
-// console.log(Math.sign(0)); // Output: 0
-// console.log(Math.sign(5)); // Output: 1
+    return -1;
+}
 
-// //16. Math.trunc(x): Returns the integer part of a number by removing any fractional digits
-// console.log(Math.trunc(3.14)); // Output: 3
-// console.log(Math.trunc(-3.14)); // Output: -3
+void Delete(int k) {
+    int index = find(k);
 
-//These are just some of the many Math functions available in JavaScript. 
-// The Math object provides a wide range of functions for performing various mathematical operations, 
-// making it easier to work with numbers in your JavaScript code. 
+    if(index == -1)
+        printf("Key Not Found!");
+    else {
+        table[index].key = -1;
+        strcpy(table[index].name, "NULL");
+        printf("\nKey %d Deleted!", k);
+    }
+}
 
+int main() {
+    int ch, k, index;
+    initialize();
+
+    do {
+        printf("\n\n***** Hash Table Menu *****");
+        printf("\n1. Insert");
+        printf("\n2. Display");
+        printf("\n3. Find");
+        printf("\n4. Delete");
+        printf("\n5. Exit");
+
+        printf("\nEnter Your Choice: ");
+        scanf("%d", &ch);
+
+        switch(ch) {
+            case 1:
+                insert();
+                break;
+
+            case 2:
+                display();
+                break;
+
+            case 3:
+                printf("Enter a Key to Search: ");
+                scanf("%d", &k);
+                index = find(k);
+                if(index == -1)
+                    printf("Key Not Found!");
+                break;
+
+            case 4:
+                printf("Enter a Key to Delete: ");
+                scanf("%d", &k);
+                Delete(k);
+                break;
+
+            case 5:
+                printf("Exiting...");
+                return 0;
+
+            default:
+                printf("Invalid Choice!");
+        }
+
+    } while(ch != 5);
+
+    return 0;
+}
