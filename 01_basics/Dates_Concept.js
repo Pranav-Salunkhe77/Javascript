@@ -1,63 +1,101 @@
-//Dates Concept in JavaScript
+//PIZZA SHOP
 
-//Creating a Date Object with specific date and time
-// let specificDate = new Date('01-01-2023');//It follows the format MM-DD-YYYY And YYYY-MM-DD. And the month starts form 01 to 12.
-// //  So, January is 01 and December is 12.
+#include <stdio.h>
+#define N 20
+#define INF 999
 
-// console.log(specificDate.toLocaleDateString('default',{
-//     weekday: 'long',
-//     year: 'numeric',
-//     month: 'long',
-//     day: 'numeric'
-// })); //January 1, 2023
+int a[N][N],v,vis[N];
 
-// //Getting the current date and time
-let currentDate = new Date();
-// console.log(currentDate.toLocaleDateString('default',{
-//     weekday: 'long',
-//     year: 'numeric',
-//     month: 'long',
-//     day: 'numeric'
-// })); //Current date and time
+void input() {
+    int i,j,e,x,y,w;
 
-// //Getting the current year, month, and day
-// console.log(currentDate.getFullYear()); //Current year
-// console.log(currentDate.getMonth() + 1); //Current month (0-11, so we add 1)
-// console.log(currentDate.getDate()); //Current day of the month
+    printf("Enter the number of locations (v): ");
+    scanf("%d",&v);
 
-// //Getting the current hours, minutes, and seconds
+    for(i=0;i<v;i++) {
+        vis[i]=0;
+        for(j=0;j<v;j++)
+            a[i][j]=INF;
+    }
 
-// //Getting the current day of the week
-// console.log(currentDate.getDay()); //Current day of the week (0-6, where 0 is Sunday)
+    printf("Enter the number of edges (e): ");
+    scanf("%d",&e);
 
-// //Getting the current timestamp
-// console.log(currentDate.getTime()); //Current timestamp in milliseconds since January 1, 1970
+    for(i=0;i<e;i++) {
+        printf("Enter the end locations of edge %d: ",i+1);
+        scanf("%d%d",&x,&y);
+        printf("Enter the travel time: ");
+        scanf("%d",&w);
+        a[x-1][y-1]=a[y-1][x-1]=w;
+    }
+}
 
-// //Getting the current timezone offset
-// console.log(currentDate.getTimezoneOffset()); //Current timezone offset in minutes
+void display() {
+    int i,j;
+    printf("\nAdjacency Matrix:\n");
+    for(i=0;i<v;i++) {
+        for(j=0;j<v;j++)
+            if(a[i][j]==INF) printf("INF ");
+            else printf("%d ",a[i][j]);
+        printf("\n");
+    }
+}
 
-// //Getting the current date and time in ISO format
-// console.log(currentDate.toISOString()); //Current date and time in ISO format
+void prim() {
+    int i,j,k,min,from=0,to=0,total=0;
 
-// //Getting the current date and time in UTC format
-console.log(currentDate.toUTCString()); //Current date and time in UTC format
+    for(i=0;i<v;i++) vis[i]=0;
+    vis[0]=1;
 
-// //Getting the current date and time in locale format
-// console.log(currentDate.toLocaleString()); //Current date and time in locale format
+    printf("\nMinimum Delivery Routes:\n");
 
-// //Getting the current date and time in locale date format
-// console.log(currentDate.toLocaleDateString()); //Current date in locale format
+    for(k=0;k<v-1;k++) {
+        min=INF;
 
-// //Getting the current date and time in locale time format
-// console.log(currentDate.toLocaleTimeString()); //Current time in locale format
+        for(i=0;i<v;i++)
+            if(vis[i])
+                for(j=0;j<v;j++)
+                    if(!vis[j] && a[i][j]<min) {
+                        min=a[i][j];
+                        from=i;
+                        to=j;
+                    }
 
-// //Getting the current date and time in locale format with options
-// console.log(currentDate.toLocaleString('default',{
-//     weekday: 'long',
-//     year: 'numeric',
-//     month: 'long',
-//     day: 'numeric',
-//     hour: '2-digit',
-//     minute: '2-digit',
-//     second: '2-digit'
-// })); //Current date and time in locale format with options      
+        if(min==INF) {
+            printf("No complete route!");
+            return;
+        }
+
+        vis[to]=1;
+        total+=min;
+
+        printf("Deliver from Location %d -> Location %d with travel time: %d\n",
+               from+1,to+1,min);
+    }
+
+    printf("\nMinimum Total Delivery Time: %d\n",total);
+}
+
+int main() {
+    int ch;
+
+    do {
+        printf("\n==========PIZZA DELIVERY MIN TIME==========\n");
+        printf("1. INPUT LOCATIONS AND EDGES\n");
+        printf("2. DISPLAY MATRIX\n");
+        printf("3. MINIMUM DELIVERY TIME\n");
+        printf("4. EXIT\n");
+        printf("Enter your choice: ");
+        scanf("%d",&ch);
+
+        switch(ch) {
+            case 1: input(); break;
+            case 2: display(); break;
+            case 3: prim(); break;
+            case 4: printf("Exiting program...\n"); break;
+            default: printf("Invalid choice!\n");
+        }
+    } while(ch!=4);
+
+    return 0;
+}
