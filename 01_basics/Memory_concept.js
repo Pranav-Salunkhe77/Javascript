@@ -1,43 +1,123 @@
-//STACK AND HEAP MEMORY CONCEPT IN JAVASCRIPT
+//Implement Hash Table Of Size 10. ANd Use the divisio method 
+//C LANGUAGE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define SIZE 10
 
-//PRIMITIVE DATA TYPES ARE STORED IN STACK MEMORY(NUMBER, STRING, BOOLEAN, NULL, UNDEFINED, SYMBOL, BIGINT)
-//REFERENCE(NON-PRIMITIVE) DATA TYPES ARE STORED IN HEAP MEMORY(OBJECT, ARRAY, FUNCTION)
+struct Node 
+{
+    int key;
+    char value[100];
+    struct Node *next;
+} *table[SIZE];
 
-//STACK -> Whwn we get the stack memoey then we get the copy of 
-// the original variable and we can change the value of the copy 
-// variable but it will not affect the original variable because
-//  both are stored in different memory location
+int hash(int k) 
+{
+    return (k % SIZE + SIZE) % SIZE;
+}
 
-//HEAP -> When we get the heap memory then we get the reference of 
-// the original variable and when we change the value of the copy 
-// variable then it will affect the original variable because both are 
-// stored in same memory location
+void insert(int k, char v[])
+{
+    int i = hash(k);
+    struct Node *n = malloc(sizeof(struct Node));
+    n->key = k;
+    strcpy(n->value, v);
+    n->next = NULL;
 
-//EXAMPLE OF STACK MEMORY
+    if (!table[i]) table[i] = n;
+    else {
+        struct Node *t = table[i];
+        while (t->next) t = t->next;
+        t->next = n;
+    }
+    printf("Inserted key %d at index %d\n", k, i);
+}
 
-let a = 10; // a is stored in stack memory
-let b = a; // b is stored in stack memory and it is a copy of a
-b = 20; // changing the value of b does not affect a
-console.log(a); // Output: 10
-console.log(b); // Output: 20
+void search(int k)
+{
+    struct Node *t = table[hash(k)];
+    while (t) {
+        if (t->key == k) {
+            printf("Key %d found at index %d with value: %s\n",
+                   k, hash(k), t->value);
+            return;
+        }
+        t = t->next;
+    }
+    printf("Key %d not found!\n", k);
+}
 
+void deleteKey(int k)
+{
+    int i = hash(k);
+    struct Node *t = table[i], *p = NULL;
 
-/*In the above example, we can see that a and b are stored in stack 
- memory and they are independent of each other. 
- Changing the value of b does not affect a because they are stored
- in different memory locations.*/
+    while (t)
+{
+        if (t->key == k) {
+            if (p) p->next = t->next;
+            else table[i] = t->next;
+            free(t);
+            printf("Key %d deleted!\n", k);
+            return;
+        }
+        p = t;
+        t = t->next;
+    }
+    printf("Key %d not found!\n", k);
+}
 
+void display() {
+    printf("\nHash Table:\n");
+    for (int i = 0; i < SIZE; i++) {
+        printf("Index %d: ", i);
+        struct Node *t = table[i];
+        if (!t) printf("NULL");
+        while (t) {
+            printf("-> [Key: %d, Value: %s] ",
+                   t->key, t->value);
+            t = t->next;
+        }
+        printf("\n");
+    }
+}
 
+int main() {
+    int ch, k;
+    char v[100], ans;
 
-//EXAMPLE OF HEAP MEMORY
+    do {
+        printf("\n***** Hash Table Menu (Chaining) *****\n");
+        printf("1. Insert\n2. Search\n3. Delete\n4. Display\n5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &ch);
 
-let obj1 = { name: "John" }; // obj1 is stored in heap memory
-let obj2 = obj1; // obj2 is stored in heap memory and it is a reference to obj1
-obj2.name = "Snow"; // changing the value of obj2 affects obj1 because both are referencing the same object in heap memory
-console.log(obj1.name); // Output: Snow
-console.log(obj2.name); // Output: Snow
+        switch (ch) {
+            case 1:
+                printf("\nEnter key: ");
+                scanf("%d", &k);
+                printf("Enter value: ");
+                scanf("%99s", v);
+                insert(k, v);
+                break;
+            case 2:
+                printf("\nEnter key to search: ");
+                scanf("%d", &k);
+                search(k);
+                break;
+            case 3:
+                printf("\nEnter key to delete: ");
+                scanf("%d", &k);
+                deleteKey(k);
+                break;
+            case 4: display(); break;
+            case 5: return 0;
+            default: printf("Invalid choice!\n");
+        }
+        printf("\nDo you want to continue (y/n): ");
+        scanf(" %c", &ans);
+    } while (ans == 'y' || ans == 'Y');
 
-/*In the above example, we can see that obj1 and obj2 are stored in 
-heap memory and they are referencing the same object. 
-Changing the value of obj2 affects obj1 because both are referencing 
-the same object in heap memory.*/
+    return 0;
+}
