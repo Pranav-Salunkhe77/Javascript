@@ -1,52 +1,55 @@
-//NUMBERS CONCEPT
+//Implement A Real TIme Event Processing SSysytem Using Queue Data Structure
 
-//In JavaScript, numbers are a fundamental data type that represents both integer and floating-point values. They are used for various purposes, including mathematical calculations, counting, and representing quantities. JavaScript uses the IEEE 754 standard for representing numbers, which allows for a wide range of values but also has some limitations in terms of precision.
+event_queue = []
+def add_event(event):
+    event_queue.append(event)
+    print(f"Event '{event}' added to the queue.")
 
-//Here are some key points about numbers in JavaScript:
+def process_next_event():
+    if event_queue:
+        event= event_queue.pop(0)
+        print(f"Processed event: '{event}'")
+    else:
+        print("No events to process.")
 
-//1. Types of Numbers:
-//   - Integer: Whole numbers without a decimal point (e.g., 1, -5, 100).
-//   - Floating-point: Numbers with a decimal point (e.g., 3.14, -0.001).
+def display_pending_events():
+    if event_queue:
+        print("Pending Events:")
+        for idx,event in enumerate(event_queue):
+            print(f"{idx}.{event}")  
+    else:
+        print("No pending events.")
 
-//Examples of numbers in JavaScript:
-let age = 30; // Integer
-let price = 19.99; // Floating-point
-let negativeNumber = -5; // Negative integer
-let zero = 0; // Zero
+def cancel_event(event_name):
+    if event_name in event_queue:
+        event_queue.remove(event_name)
+        print(f"Event '{event_name}' has been canceled.")
+    else:
+        print(f"Event '{event_name}'not found or already processed.")
 
-console.log(age); // Output: 30
-console.log(price); // Output: 19.99
-console.log(negativeNumber); // Output: -5
-console.log(zero); // Output: 0
+def menu():
+    while True:
+        print("\n---EVENT MENU---")
+        print("1. Add Event")
+        print("2.process next Event")
+        print("3. Display pending events")
+        print("4.Cancel an Events")
+        print("5.Exit")
 
-//All Methodes of Numbers with examples
-
-//1. toFixed(digits): Formats a number using fixed-point notation
-let num = 3.14159;
-console.log(num.toFixed(2)); // Output: 3.14
-
-//2. toExponential(digits): Returns a string representing the number in exponential notation
-console.log(num.toExponential(2)); // Output: 3.14e+0
-
-//3. toPrecision(digits): Returns a string representing the number to a specified precision
-console.log(num.toPrecision(4)); // Output: 3.142
-
-//4. parseInt(string, radix): Parses a string and returns an integer of the specified radix (base)
-let str = "42";
-console.log(parseInt(str)); // Output: 42
-console.log(parseInt(str, 16)); // Output: 66 (hexadecimal)
-
-//5. parseFloat(string): Parses a string and returns a floating-point number
-let floatStr = "3.14";
-console.log(parseFloat(floatStr)); // Output: 3.14
-
-//6. isNaN(value): Determines whether a value is NaN (Not-a-Number)
-console.log(isNaN("hello")); // Output: true
-console.log(isNaN(123)); // Output: false
-
-//7. isFinite(value): Determines whether a value is a finite number
-console.log(isFinite(123)); // Output: true
-console.log(isFinite(Infinity)); // Output: false
-console.log(isFinite(NaN)); // Output: false
-
-
+        choice = input("Enter your choice:")
+        if choice == '1':
+            event = input("Enter event name:")
+            add_event(event)
+        elif choice == '2':
+            process_next_event()
+        elif choice == '3':
+            display_pending_events()
+        elif choice == '4':
+            event_name = input("Enter event name to cancel:")
+            cancel_event(event_name)
+        elif choice == '5':
+            print("Existing Event processing System. ")
+            break
+        else:
+            print("Invalid choice.please enter a number between 1 and 5.")
+menu()
