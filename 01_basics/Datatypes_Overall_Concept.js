@@ -1,100 +1,109 @@
-//  Primitive
+//IMPLEMENT OPERATION BASED ON INSERTION, SELECTION, DISPLAY, SEARCH
+//C LANGUAGE
+#include <stdio.h>
+#include <stdlib.h>
 
-//  7 types : String, Number, Boolearn, null, undefined, Symbol, BigInt
+struct Node {
+    int data;
+    struct Node *left, *right;
+};
 
-const score = true
-const scoreValue = 100.3
-
-const isLoggedIn = false
-const outsideTemp = null
-let userEmail;
-
-const id = Symbol('123')
-const anotherId = Symbol('123')
-
-console.log(id === anotherId);
-
-// const bigNumber = 3456543576654356754n
-
-
-
-// Reference (Non primitive)
-
-// Array, Objects, Functions
-
-const heros = ["shaktiman", "naagraj", "doga"];
-let myObj = {
-    name: "hitesh",
-    age: 22,
+struct Node* insert(struct Node* r, int x) {
+    if(r == NULL) {
+        r = malloc(sizeof(struct Node));
+        r->data = x;
+        r->left = r->right = NULL;
+    }
+    else if(x < r->data)
+        r->left = insert(r->left, x);
+    else if(x > r->data)
+        r->right = insert(r->right, x);
+    return r;
 }
 
-const myFunction = function(){
-    console.log("Hello world");
+void display(struct Node* r) {
+    if(r) {
+        display(r->left);
+        printf("%d ", r->data);
+        display(r->right);
+    }
 }
 
-console.log(typeof myObj);
+int search(struct Node* r, int x) {
+    if(r == NULL) return 0;
+    if(r->data == x) return 1;
+    if(x < r->data) return search(r->left,x);
+    return search(r->right,x);
+}
 
-// https://262.ecma-international.org/5.1/#sec-11.4.3 //Study Link
+struct Node* del(struct Node* r, int x) {
+    struct Node *t;
+    if(r == NULL) return r;
 
+    if(x < r->data) r->left = del(r->left,x);
+    else if(x > r->data) r->right = del(r->right,x);
+    else {
+        if(r->left == NULL) {
+            t = r->right;
+            free(r);
+            return t;
+        }
+        if(r->right == NULL) {
+            t = r->left;
+            free(r);
+            return t;
+        }
+        t = r->right;
+        while(t->left) t = t->left;
+        r->data = t->data;
+        r->right = del(r->right,t->data);
+    }
+    return r;
+}
 
-// Primitive DataTypes:
+int main() {
+    struct Node* root = NULL;
+    int ch,x;
 
+    do {
+        printf("\n1.Insert\n2.Delete\n3.Search\n4.Display\n5.Exit");
+        printf("\nEnter choice: ");
+        scanf("%d",&ch);
 
-// 1.Number: Represents both integer and floating-point numbers. Example: 5, 3.14.
- 
-// 2.String: Represents a sequence of characters enclosed in single or double quotes. Example: "Hello, world!".
+        switch(ch) {
+            case 1:
+                printf("Enter value: ");
+                scanf("%d",&x);
+                root=insert(root,x);
+                printf("Node inserted successfully!");
+                break;
 
-// 3,Boolean: Represents a binary value, either true or false, often used for conditional logic.
+            case 2:
+                printf("Enter value: ");
+                scanf("%d",&x);
+                root=del(root,x);
+                printf("Node deleted successfully!");
+                break;
 
-// 4.Undefined: Represents a variable that has been declared but hasn't been assigned a value yet. Example: let x;.
+            case 3:
+                printf("Enter value: ");
+                scanf("%d",&x);
+                if(search(root,x))
+                    printf("Node found!");
+                else
+                    printf("Node not found!");
+                break;
 
-// 5.Null:  standalone value it is represenataion of empty value it is special type and it is a object type. Example: let y = null; 
+            case 4:
+                printf("Inorder Traversal: ");
+                display(root);
+                break;
 
-// 6.Symbol (ES6): it is mostly used used to find uniqnece.
+            case 5:
+                printf("Exiting...");
+                break;
+        }
+    } while(ch != 5);
 
-// 7.BigInt (ES11): Represents large integers that cannot be represented by the Number type.
-
-//  Refence (Object Data Types):
-
-// 1.Object: Represents a collection of key-value pairs (properties and methods). Example: { name: "John", age: 30 }.
-
-// 2.Array: Represents a list-like collection of values, indexed by numbers (integer indices). Example: [1, 2, 3, 4].
-
-// 3.Function: Represents a reusable block of code that can be invoked or called with arguments. Example: function add(x, y) { return x + y; }.
-
-// 4.Date: Represents dates and times.
-
-// 5.RegExp: Represents regular expressions for pattern matching.
-
-
-
-// lets talk about some Range of Primitive DataType:
-
-//     1.Number:
-//         Represents both integers and floating-point numbers.
-//         Typical Range: -9,007,199,254,740,992 (-2^53) to 9,007,199,254,740,992 (2^53) inclusive.
-//         Smallest Increment: 2^(-52).
-
-//     2.String:
-//         Represents a sequence of characters.
-//         No specific range limit, but practical limits depend on memory and system resources.
-
-//     3.Boolean:
-//         Represents true or false.
-//         Only two possible values: true and false.
-
-//     4.Undefined:
-//         Represents a variable that has been declared but hasn't been assigned a value.
-//         It has only one possible value: undefined.
-
-//     5.Null:
-//         Represents the intentional absence of any object or value.
-//         It has only one possible value: null.
-
-//     6.Symbol (ES6):
-//         Represents a unique and immutable value.
-//         No specific range limit.
-
-//     7.BigInt (ES11):
-//         Represents large integers that cannot be represented by the Number type.
-//         The range is practically unlimited and depends on available memory.
+    return 0;
+}
